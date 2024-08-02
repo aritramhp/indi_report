@@ -1,5 +1,4 @@
 import os
-import shutil
 import subprocess
 import pandas as pd
 import numpy as np
@@ -20,28 +19,28 @@ def run_rhea(rhea_directory,ref_alpha,ref_phyla,ref_genera,input_dir):
         if res:
             print('Error in Alpha-Diversity.R')
         else:
-            # shutil.copy2(os.path.join(rhea_directory,'2.Alpha-Diversity','alpha-diversity.tab'), os.path.join(input_dir,'alpha-diversity.tab'))
             df1 = pd.read_csv(os.path.join(rhea_directory,'2.Alpha-Diversity','alpha-diversity.tab'), sep='\t')
             df2 = pd.read_csv(ref_alpha, sep='\t')
             df3 = pd.concat([df1,df2],axis='index')
-            df3.to_csv(os.path.join(input_dir,'alpha-diversity_ref_current.tab'),sep='\t',index=None)
-
+            alpha_diversity = os.path.join(input_dir,'alpha-diversity_ref_current.tab')
+            df3.to_csv(alpha_diversity,sep='\t',index=None)
         
         print('Running Taxonomic-Binning.R')
         res = subprocess.call('Rscript ' + os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning.R'), shell=True)
         if res:
             print('Error in Taxonomic-Binning.R')
         else:
-            shutil.copy2(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','1.Phyla.all.tab'), os.path.join(input_dir,'1.Phyla.all.tab'))
-            shutil.copy2(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','5.Genera.all.tab'), os.path.join(input_dir,'5.Genera.all.tab'))
             df1 = pd.read_csv(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','1.Phyla.all.tab'),sep='\t')
             df2 = pd.read_csv(ref_phyla,sep='\t')
             df3 = pd.merge(df1, df2, on='Unnamed: 0', how='outer').fillna(0)
-            df3.to_csv(os.path.join(input_dir,'1.Phyla.all_ref_current.tab'),sep='\t',index=None)
+            tax_phylum = os.path.join(input_dir,'1.Phyla.all_ref_current.tab')
+            df3.to_csv(tax_phylum,sep='\t',index=None)
             df1 = pd.read_csv(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','5.Genera.all.tab'),sep='\t')
             df2 = pd.read_csv(ref_genera,sep='\t')
             df3 = pd.merge(df1, df2, on='Unnamed: 0', how='outer').fillna(0)
-            df3.to_csv(os.path.join(input_dir,'5.Genera.all_ref_current.tab'),sep='\t',index=None)
+            tax_genera= os.path.join(input_dir,'5.Genera.all_ref_current.tab')
+            df3.to_csv(tax_genera,sep='\t',index=None)
+    return alpha_diversity, tax_phylum, tax_genera
 
 def merge_with_ref(ref_alpha,ref_phyla,ref_genera,input_dir):
     df1 = pd.read_csv(os.path.join(input_dir,'alpha-diversity.tab'), sep='\t')
