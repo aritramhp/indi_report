@@ -24,7 +24,7 @@ def run_rhea(rhea_directory,ref_alpha,ref_phyla,ref_genera,input_dir):
             df1 = pd.read_csv(os.path.join(rhea_directory,'2.Alpha-Diversity','alpha-diversity.tab'), sep='\t')
             df2 = pd.read_csv(ref_alpha, sep='\t')
             df3 = pd.concat([df1,df2],axis='index')
-            df3.to_csv(os.path.join(input_dir,'alpha-diversity.tab'),sep='\t',index=None)
+            df3.to_csv(os.path.join(input_dir,'alpha-diversity_ref_current.tab'),sep='\t',index=None)
 
         
         print('Running Taxonomic-Binning.R')
@@ -32,16 +32,36 @@ def run_rhea(rhea_directory,ref_alpha,ref_phyla,ref_genera,input_dir):
         if res:
             print('Error in Taxonomic-Binning.R')
         else:
-            shutil.copy2(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','1.Phyla.all.tab'), os.path.join(input_dir,'Phyla.sample.tab'))
-            shutil.copy2(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','5.Genera.all.tab'), os.path.join(input_dir,'Genera.sample.tab'))
-            df1 = pd.read_csv(os.path.join(input_dir,'Phyla.sample.tab'),sep='\t')
+            shutil.copy2(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','1.Phyla.all.tab'), os.path.join(input_dir,'1.Phyla.all.tab'))
+            shutil.copy2(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','5.Genera.all.tab'), os.path.join(input_dir,'5.Genera.all.tab'))
+            df1 = pd.read_csv(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','1.Phyla.all.tab'),sep='\t')
             df2 = pd.read_csv(ref_phyla,sep='\t')
             df3 = pd.merge(df1, df2, on='Unnamed: 0', how='outer').fillna(0)
-            df3.to_csv(os.path.join(input_dir,'1.Phyla.all.tab'),sep='\t',index=None)
-            df1 = pd.read_csv(os.path.join(input_dir,'Genera.sample.tab'),sep='\t')
+            df3.to_csv(os.path.join(input_dir,'1.Phyla.all_ref_current.tab'),sep='\t',index=None)
+            df1 = pd.read_csv(os.path.join(rhea_directory,'4.Taxonomic-Binning','Taxonomic-Binning','5.Genera.all.tab'),sep='\t')
             df2 = pd.read_csv(ref_genera,sep='\t')
             df3 = pd.merge(df1, df2, on='Unnamed: 0', how='outer').fillna(0)
-            df3.to_csv(os.path.join(input_dir,'5.Genera.all.tab'),sep='\t',index=None)
+            df3.to_csv(os.path.join(input_dir,'5.Genera.all_ref_current.tab'),sep='\t',index=None)
+
+def merge_with_ref(ref_alpha,ref_phyla,ref_genera,input_dir):
+    df1 = pd.read_csv(os.path.join(input_dir,'alpha-diversity.tab'), sep='\t')
+    df2 = pd.read_csv(ref_alpha, sep='\t')
+    df3 = pd.concat([df1,df2],axis='index')
+    alpha_diversity = os.path.join(input_dir,'alpha-diversity_ref_current.tab')
+    df3.to_csv(os.path.join(input_dir,'alpha-diversity_ref_current.tab'),sep='\t',index=None)
+
+    df1 = pd.read_csv(os.path.join(input_dir,'Phyla.sample.tab'),sep='\t')
+    df2 = pd.read_csv(ref_phyla,sep='\t')
+    df3 = pd.merge(df1, df2, on='Unnamed: 0', how='outer').fillna(0)
+    tax_phylum = os.path.join(input_dir,'1.Phyla.all_ref_current.tab')
+    df3.to_csv(os.path.join(input_dir,'1.Phyla.all_ref_current.tab'),sep='\t',index=None)
+    df1 = pd.read_csv(os.path.join(input_dir,'Genera.sample.tab'),sep='\t')
+    df2 = pd.read_csv(ref_genera,sep='\t')
+    df3 = pd.merge(df1, df2, on='Unnamed: 0', how='outer').fillna(0)
+    tax_genera = os.path.join(input_dir,'5.Genera.all_ref_current.tab')
+    df3.to_csv(os.path.join(input_dir,'5.Genera.all_ref_current.tab'),sep='\t',index=None)
+
+    return alpha_diversity, tax_phylum, tax_genera
 
 
 def alpha_plot(df,parameter,my_pal,sample_alpha,yticks,sample_lbl,xlabel,figfile):
@@ -63,14 +83,14 @@ def alpha_plot(df,parameter,my_pal,sample_alpha,yticks,sample_lbl,xlabel,figfile
     plt.close()
 
 
-def alpha_diversity(input_dir, samplename, category, parameter):
+def alpha_diversity(input_dir, samplename, alpha_div, category, parameter):
     sample_dir = os.path.join(input_dir, samplename)
     if not os.path.exists(os.path.join(input_dir,samplename)): os.mkdir(sample_dir)
     color_library = ['#DFDED4','#F1F4F4','#899499']
     my_pal = {category[i][0]:color_library[i] for i in range(len(category))}
     alpha_list, cat_class, quartile = [], [], []
     for cat, cat_sample in category:
-        df_alpha = pd.read_csv(os.path.join(input_dir,'alpha-diversity.tab'), sep='\t').set_index('Unnamed: 0')
+        df_alpha = pd.read_csv(alpha_div, sep='\t').set_index('Unnamed: 0')
         sample_alpha = df_alpha.loc[samplename,parameter]
         cat_alpha = df_alpha.loc[cat_sample,parameter].to_list()
         alpha_list.extend(cat_alpha)
