@@ -10,6 +10,7 @@ This program generates reports (in PDF) for individual patient from the microbio
 - scipy
 - Pillow
 - fpdf2
+- openpyxl
 - ipykernel
   
 ## Steps to follow:
