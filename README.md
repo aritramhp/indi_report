@@ -2,6 +2,7 @@
 This program generates reports (in PDF) for individual patient from the microbiome signatures
 
 # Installation and Setup:
+## List of packages:
 1) Install VS Code
 2) Install Anaconda
 3) Open Anaconda Prompt
