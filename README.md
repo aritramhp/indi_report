@@ -3,6 +3,16 @@ This program generates reports (in PDF) for individual patient from the microbio
 
 # Installation and Setup:
 ## List of packages:
+- pandas
+- numpy
+- matplotlib
+- seaborn
+- scipy
+- Pillow
+- fpdf2
+- ipykernel
+  
+## Steps to follow:
 1) Install VS Code
 2) Install Anaconda
 3) Open Anaconda Prompt
