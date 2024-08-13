@@ -3,6 +3,8 @@ This program generates reports (in PDF) for individual patient from the microbio
 
 # Installation and Setup:
 ## List of packages:
+The environment has been provided in `requirements.txt` file. Don't need to install each package
+separately. However, if any package fails to install, install them explicitly.  
 - pandas
 - numpy
 - matplotlib
