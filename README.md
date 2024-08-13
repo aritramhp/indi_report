@@ -25,7 +25,7 @@ To update the DB,
 
 # Execution:
 1) Open `patientReport_v1.ipynb` on VS Code
-2) Select `indi_report` environment
+2) Select `indi_report` environment on VS Code
 3) You are ready to generate reports
 
 # Files
