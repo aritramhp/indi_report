@@ -164,7 +164,7 @@ def stacked_bar_phylum(df_barplot,clr,xticks,ylabel,figfile):
     sns.set(rc={'figure.figsize':(2,10)})
     sns.set_style("whitegrid")
     ax = df_barplot.plot(kind='bar', stacked=True, color=clr,legend='reverse',linewidth=0,rot=90,width=0.8, grid=True)
-    ax.set_yticks([0,1,2])
+    ax.set_xticks([0,1,2])
     ax.set_xticklabels(xticks)
     ax.tick_params(labelsize=18)
     sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1), title='',fontsize=18)
